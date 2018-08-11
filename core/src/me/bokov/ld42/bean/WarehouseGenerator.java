@@ -13,12 +13,15 @@ public class WarehouseGenerator {
     private int maxNumberOfShelves = 10;
     private int minShelfHeight = 1;
     private int maxShelfHeight = 6;
-    private int minEmptySpaces = 3;
-    private int maxEmptySpaces = 5;
+    private int minEmptySpaces = 7;
+    private int maxEmptySpaces = 10;
 
     public Warehouse generate () {
 
         Warehouse warehouse = new Warehouse ();
+
+        warehouse.setTransform ( true );
+
         Random random = new Random (  );
 
         warehouse.setShelves ( new ArrayList <> (  ) );
@@ -29,12 +32,15 @@ public class WarehouseGenerator {
 
             Shelf shelf = new Shelf ();
 
+            shelf.setTransform ( true );
+            shelf.setX ( (48f + 6f) * shelfIndex );
+
             int shelfHeight = random.nextInt ( maxShelfHeight - minShelfHeight ) + minShelfHeight;
 
-            shelf.setHeight ( shelfHeight );
+            shelf.setShelfHeight ( shelfHeight );
 
-            shelf.setColor (
-                    Shelf.Color.values () [ random.nextInt ( Shelf.Color.values ().length ) ]
+            shelf.setShelfColor (
+                    Shelf.ShelfColor.values () [ random.nextInt ( Shelf.ShelfColor.values ().length ) ]
             );
 
             for (int boxIndex = 0; boxIndex < shelfHeight; boxIndex++) {
@@ -42,13 +48,12 @@ public class WarehouseGenerator {
                 boolean placed = false;
                 while (!placed) {
 
-                    Box box = new Box ();
-
-                    box.setSize (
-                            Box.Size.values () [ random.nextInt ( Box.Size.values ().length ) ]
+                    Box box = new Box (
+                            Box.BoxSize.values () [ random.nextInt ( Box.BoxSize.values ().length ) ]
                     );
-                    box.setColor (
-                            Box.Color.values () [ random.nextInt ( Box.Color.values ().length ) ]
+
+                    box.setBoxColor (
+                            Box.BoxColor.values () [ random.nextInt ( Box.BoxColor.values ().length ) ]
                     );
 
                     if ( shelf.addBox ( box ) ) placed = true;
@@ -58,6 +63,7 @@ public class WarehouseGenerator {
             }
 
             warehouse.getShelves ().add ( shelf );
+            warehouse.addActor ( shelf );
 
         }
 

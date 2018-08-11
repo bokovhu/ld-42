@@ -1,62 +1,81 @@
 package me.bokov.ld42.model.game;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import me.bokov.ld42.store.Textures;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Shelf {
+public class Shelf extends Group {
 
-    public enum Color {
+    public enum ShelfColor {
 
-        white ( com.badlogic.gdx.graphics.Color.WHITE ),
-        red ( com.badlogic.gdx.graphics.Color.RED ),
-        green ( com.badlogic.gdx.graphics.Color.GREEN ),
-        blue ( com.badlogic.gdx.graphics.Color.BLUE );
+        white ( Color.WHITE ),
+        red ( Color.RED ),
+        green ( Color.GREEN ),
+        blue ( Color.BLUE );
 
-        public com.badlogic.gdx.graphics.Color gdxColor;
+        public Color gdxColor;
 
-        Color ( com.badlogic.gdx.graphics.Color c ) {
+        ShelfColor ( com.badlogic.gdx.graphics.Color c ) {
             this.gdxColor = c.cpy ();
         }
 
     }
 
+    public Shelf () {
+
+        setBounds (
+                0f, 0f,
+                48f, 64f + ( shelfHeight - 1 ) * 32f
+        );
+
+    }
+
+    // Model variables -------------------------------------------------------------------------------------------------
+
     private static AtomicInteger idGenerator = new AtomicInteger ();
 
     private int id = idGenerator.incrementAndGet ();
 
-    private int height;
-    private Color color;
+    private int shelfHeight;
+    private ShelfColor shelfColor;
     private List <Box> boxes = new ArrayList <> ();
 
-    public boolean isBoxColorCompatible ( Box.Color boxColor ) {
+    // Actor variables -------------------------------------------------------------------------------------------------
 
-        switch ( this.color ) {
+    public boolean isBoxColorCompatible ( Box.BoxColor boxColor ) {
+
+        switch ( this.shelfColor ) {
 
             case white:
 
                 return true;
             case red:
 
-                return boxColor == Box.Color.white
-                        || boxColor == Box.Color.red
-                        || boxColor == Box.Color.magenta
-                        || boxColor == Box.Color.yellow;
+                return boxColor == Box.BoxColor.white
+                        || boxColor == Box.BoxColor.red
+                        || boxColor == Box.BoxColor.magenta
+                        || boxColor == Box.BoxColor.yellow;
 
             case green:
 
-                return boxColor == Box.Color.white
-                        || boxColor == Box.Color.green
-                        || boxColor == Box.Color.cyan
-                        || boxColor == Box.Color.yellow;
+                return boxColor == Box.BoxColor.white
+                        || boxColor == Box.BoxColor.green
+                        || boxColor == Box.BoxColor.cyan
+                        || boxColor == Box.BoxColor.yellow;
 
             case blue:
 
-                return boxColor == Box.Color.white
-                        || boxColor == Box.Color.blue
-                        || boxColor == Box.Color.cyan
-                        || boxColor == Box.Color.magenta;
+                return boxColor == Box.BoxColor.white
+                        || boxColor == Box.BoxColor.blue
+                        || boxColor == Box.BoxColor.cyan
+                        || boxColor == Box.BoxColor.magenta;
 
         }
 
@@ -67,25 +86,25 @@ public class Shelf {
     public boolean isBoxPlaceable ( Box box ) {
 
         if ( boxes.isEmpty () ) {
-            return isBoxColorCompatible ( box.getColor () );
+            return isBoxColorCompatible ( box.getBoxColor () );
         }
 
         Box topBox = boxes.get ( boxes.size () - 1 );
 
-        switch ( topBox.getSize () ) {
+        switch ( topBox.getBoxSize () ) {
 
             case small:
 
-                return box.getSize () == Box.Size.small
-                        && isBoxColorCompatible ( box.getColor () );
+                return box.getBoxSize () == Box.BoxSize.small
+                        && isBoxColorCompatible ( box.getBoxColor () );
             case medium:
 
-                return ( box.getSize () == Box.Size.medium
-                        || box.getSize () == Box.Size.small )
-                        && isBoxColorCompatible ( box.getColor () );
+                return ( box.getBoxSize () == Box.BoxSize.medium
+                        || box.getBoxSize () == Box.BoxSize.small )
+                        && isBoxColorCompatible ( box.getBoxColor () );
             case big:
 
-                return isBoxColorCompatible ( box.getColor () );
+                return isBoxColorCompatible ( box.getBoxColor () );
         }
 
         throw new IllegalArgumentException ( "??" );
@@ -103,6 +122,7 @@ public class Shelf {
         }
 
         boxes.remove ( box );
+        removeActor ( box );
 
         box.setShelf ( null );
         box.setShelfIndex ( null );
@@ -113,9 +133,9 @@ public class Shelf {
 
     public boolean addBox ( Box box ) {
 
-        if ( boxes.size () < height ) {
+        if ( boxes.size () < shelfHeight ) {
 
-            if (!isBoxPlaceable ( box )) return false;
+            if ( !isBoxPlaceable ( box ) ) return false;
 
             if ( box.getShelf () != null ) {
 
@@ -125,6 +145,18 @@ public class Shelf {
 
             box.setShelfIndex ( boxes.size () );
             box.setShelf ( this );
+
+            if (box.getParent () != null) {
+                box.getParent ().removeActor ( box );
+            }
+
+            box.setY ( getY () + 16f + 32f * box.getShelfIndex () );
+            box.setX ( 8f );
+            if (box.getBoxSize () == Box.BoxSize.small) box.setX ( box.getX () + 8f );
+            else if (box.getBoxSize () == Box.BoxSize.medium) box.setX ( box.getX () + 4f );
+
+            addActor ( box );
+
             boxes.add ( box );
 
             return true;
@@ -135,20 +167,20 @@ public class Shelf {
 
     }
 
-    public int getHeight () {
-        return height;
+    public int getShelfHeight () {
+        return shelfHeight;
     }
 
-    public void setHeight ( int height ) {
-        this.height = height;
+    public void setShelfHeight ( int shelfHeight ) {
+        this.shelfHeight = shelfHeight;
     }
 
-    public Color getColor () {
-        return color;
+    public ShelfColor getShelfColor () {
+        return shelfColor;
     }
 
-    public void setColor ( Color color ) {
-        this.color = color;
+    public void setShelfColor ( ShelfColor shelfColor ) {
+        this.shelfColor = shelfColor;
     }
 
     public List <Box> getBoxes () {
@@ -175,4 +207,40 @@ public class Shelf {
     public int hashCode () {
         return Objects.hash ( id );
     }
+
+    @Override
+    public void draw ( Batch spriteBatch, float parentAlpha ) {
+
+        spriteBatch.setColor ( shelfColor.gdxColor );
+
+        spriteBatch.draw (
+                Textures.get ().getShelfBottomTexture (),
+                getX (),
+                getY ()
+        );
+
+        int yOffset = 32;
+
+        for ( int i = 1; i < shelfHeight; i++ ) {
+
+            spriteBatch.draw (
+                    Textures.get ().getShelfMiddleTexture (),
+                    getX (),
+                    getY () + yOffset
+            );
+
+            yOffset += 32;
+
+        }
+
+        spriteBatch.draw (
+                Textures.get ().getShelfTopTexture (),
+                getX (),
+                getY () + yOffset
+        );
+
+        super.draw ( spriteBatch, parentAlpha );
+
+    }
+
 }

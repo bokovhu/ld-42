@@ -18,7 +18,7 @@ Each box is assigned a unique number, and has various traits, such as:
     
 The warehouse has different kinds of shelves, each having various traits, such as:
 
-* Vertical size of the shelf
+* Vertical boxSize of the shelf
     * 1 box tall
     * 2 boxes tall
     * 3 boxes tall
@@ -32,13 +32,13 @@ Boxes are arranged on the shelves in a way, that each "box placement state" sati
 
 * Given a shelf with a tallness of _n_, no more, than _n_ boxes are allowed to be placed on this
 given shelf
-* Given a shelf of _white_ color, boxes of any colors may be placed on it
-* Given a shelf of _red_ color, boxes of colors _white_, _red_, _yellow_ and _magenta_ may be placed on it
-* Given a shelf of _blue_ color, boxes of colors _white_, _blue_, _cyan_ and _magenta_ may be placed on it
-* Given a shelf of _green_ color, boxes of colors _white_, _green_, _cyan_ and _yellow_ may be placed on it
-* Boxes, that are of size _big_ may only be placed on top of other boxes with size _big_, or as the first box of a shelf
-* Boxes, that are of size _medium_ may only be placed on top of other boxes with sizes _big_ or _medium_, or as the first box of the shelf
-* Boxes, that are of size _small_ may be placed on top of any other box, or as the first box of a shelf
+* Given a shelf of _white_ shelfColor, boxes of any colors may be placed on it
+* Given a shelf of _red_ shelfColor, boxes of colors _white_, _red_, _yellow_ and _magenta_ may be placed on it
+* Given a shelf of _blue_ shelfColor, boxes of colors _white_, _blue_, _cyan_ and _magenta_ may be placed on it
+* Given a shelf of _green_ shelfColor, boxes of colors _white_, _green_, _cyan_ and _yellow_ may be placed on it
+* Boxes, that are of boxSize _big_ may only be placed on top of other boxes with boxSize _big_, or as the first box of a shelf
+* Boxes, that are of boxSize _medium_ may only be placed on top of other boxes with sizes _big_ or _medium_, or as the first box of the shelf
+* Boxes, that are of boxSize _small_ may be placed on top of any other box, or as the first box of a shelf
 
 The game consists of two "phases":
 
