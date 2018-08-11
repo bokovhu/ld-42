@@ -8,8 +8,14 @@ public class Textures {
 
     private static Textures INSTANCE = new Textures ();
 
-    private Texture boxTexture;
-    private TextureRegion boxTextureRegion;
+    private Texture bigBoxTexture;
+    private TextureRegion bigBoxTextureRegion;
+
+    private Texture mediumBoxTexture;
+    private TextureRegion mediumBoxTextureRegion;
+
+    private Texture smallBoxTexture;
+    private TextureRegion smallBoxTextureRegion;
 
     private Texture shelfBottomTexture;
     private TextureRegion shelfBottomTextureRegion;
@@ -26,8 +32,14 @@ public class Textures {
 
     public void load () {
 
-        boxTexture = new Texture ( Gdx.files.internal ( "textures/box.png" ) );
-        boxTextureRegion = new TextureRegion ( boxTexture );
+        bigBoxTexture = new Texture ( Gdx.files.internal ( "textures/box.png" ) );
+        bigBoxTextureRegion = new TextureRegion ( bigBoxTexture );
+
+        mediumBoxTexture = new Texture ( Gdx.files.internal ( "textures/box-medium.png" ) );
+        mediumBoxTextureRegion = new TextureRegion ( mediumBoxTexture );
+
+        smallBoxTexture = new Texture ( Gdx.files.internal ( "textures/box-small.png" ) );
+        smallBoxTextureRegion = new TextureRegion ( smallBoxTexture );
 
         shelfBottomTexture = new Texture ( Gdx.files.internal ( "textures/shelf-bottom.png" ) );
         shelfBottomTextureRegion = new TextureRegion ( shelfBottomTexture );
@@ -42,7 +54,9 @@ public class Textures {
 
     public void dispose () {
 
-        boxTexture.dispose ();
+        bigBoxTexture.dispose ();
+        mediumBoxTexture.dispose ();
+        smallBoxTexture.dispose ();
         shelfBottomTexture.dispose ();
         shelfMiddleTexture.dispose ();
         shelfTopTexture.dispose ();
@@ -53,12 +67,28 @@ public class Textures {
         return INSTANCE;
     }
 
-    public Texture getBoxTexture () {
-        return boxTexture;
+    public Texture getBigBoxTexture () {
+        return bigBoxTexture;
     }
 
-    public TextureRegion getBoxTextureRegion () {
-        return boxTextureRegion;
+    public TextureRegion getBigBoxTextureRegion () {
+        return bigBoxTextureRegion;
+    }
+
+    public Texture getMediumBoxTexture () {
+        return mediumBoxTexture;
+    }
+
+    public TextureRegion getMediumBoxTextureRegion () {
+        return mediumBoxTextureRegion;
+    }
+
+    public Texture getSmallBoxTexture () {
+        return smallBoxTexture;
+    }
+
+    public TextureRegion getSmallBoxTextureRegion () {
+        return smallBoxTextureRegion;
     }
 
     public Texture getShelfBottomTexture () {
