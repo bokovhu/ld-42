@@ -30,6 +30,68 @@ public class Shelf {
     private Color color;
     private List <Box> boxes = new ArrayList <> ();
 
+    public boolean isBoxColorCompatible ( Box.Color boxColor ) {
+
+        switch ( this.color ) {
+
+            case white:
+
+                return true;
+            case red:
+
+                return boxColor == Box.Color.white
+                        || boxColor == Box.Color.red
+                        || boxColor == Box.Color.magenta
+                        || boxColor == Box.Color.yellow;
+
+            case green:
+
+                return boxColor == Box.Color.white
+                        || boxColor == Box.Color.green
+                        || boxColor == Box.Color.cyan
+                        || boxColor == Box.Color.yellow;
+
+            case blue:
+
+                return boxColor == Box.Color.white
+                        || boxColor == Box.Color.blue
+                        || boxColor == Box.Color.cyan
+                        || boxColor == Box.Color.magenta;
+
+        }
+
+        throw new IllegalArgumentException ( "??" );
+
+    }
+
+    public boolean isBoxPlaceable ( Box box ) {
+
+        if ( boxes.isEmpty () ) {
+            return isBoxColorCompatible ( box.getColor () );
+        }
+
+        Box topBox = boxes.get ( boxes.size () - 1 );
+
+        switch ( topBox.getSize () ) {
+
+            case small:
+
+                return box.getSize () == Box.Size.small
+                        && isBoxColorCompatible ( box.getColor () );
+            case medium:
+
+                return ( box.getSize () == Box.Size.medium
+                        || box.getSize () == Box.Size.small )
+                        && isBoxColorCompatible ( box.getColor () );
+            case big:
+
+                return isBoxColorCompatible ( box.getColor () );
+        }
+
+        throw new IllegalArgumentException ( "??" );
+
+    }
+
     public boolean removeBox ( Box box ) {
 
         if ( !boxes.contains ( box ) ) return false;
@@ -52,6 +114,8 @@ public class Shelf {
     public boolean addBox ( Box box ) {
 
         if ( boxes.size () < height ) {
+
+            if (!isBoxPlaceable ( box )) return false;
 
             if ( box.getShelf () != null ) {
 
