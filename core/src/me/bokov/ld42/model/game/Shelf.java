@@ -9,24 +9,30 @@ public class Shelf {
 
     public enum Color {
 
-        white,
-        red,
-        green,
-        blue
+        white ( com.badlogic.gdx.graphics.Color.WHITE ),
+        red ( com.badlogic.gdx.graphics.Color.RED ),
+        green ( com.badlogic.gdx.graphics.Color.GREEN ),
+        blue ( com.badlogic.gdx.graphics.Color.BLUE );
+
+        public com.badlogic.gdx.graphics.Color gdxColor;
+
+        Color ( com.badlogic.gdx.graphics.Color c ) {
+            this.gdxColor = c.cpy ();
+        }
 
     }
 
-    private static AtomicInteger idGenerator = new AtomicInteger (  );
+    private static AtomicInteger idGenerator = new AtomicInteger ();
 
     private int id = idGenerator.incrementAndGet ();
 
     private int height;
     private Color color;
-    private List <Box> boxes = new ArrayList <> (  );
+    private List <Box> boxes = new ArrayList <> ();
 
     public boolean removeBox ( Box box ) {
 
-        if (!boxes.contains ( box )) return false;
+        if ( !boxes.contains ( box ) ) return false;
 
         if ( box.getShelfIndex () != boxes.size () - 1 ) {
 
@@ -45,11 +51,11 @@ public class Shelf {
 
     public boolean addBox ( Box box ) {
 
-        if (boxes.size () < height) {
+        if ( boxes.size () < height ) {
 
-            if (box.getShelf () != null) {
+            if ( box.getShelf () != null ) {
 
-                if (!box.getShelf ().removeBox ( box )) return false;
+                if ( !box.getShelf ().removeBox ( box ) ) return false;
 
             }
 
