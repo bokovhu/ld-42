@@ -11,15 +11,6 @@ public class Textures {
     private Texture boxTexture;
     private TextureRegion boxTextureRegion;
 
-    private Texture shelf1Texture;
-    private TextureRegion shelf1TextureRegion;
-
-    private Texture shelf2Texture;
-    private TextureRegion shelf2TextureRegion;
-
-    private Texture shelf3Texture;
-    private TextureRegion shelf3TextureRegion;
-
     private Texture shelfBottomTexture;
     private TextureRegion shelfBottomTextureRegion;
 
@@ -38,16 +29,6 @@ public class Textures {
         boxTexture = new Texture ( Gdx.files.internal ( "textures/box.png" ) );
         boxTextureRegion = new TextureRegion ( boxTexture );
 
-        shelf1Texture = new Texture ( Gdx.files.internal ( "textures/shelf-1.png" ) );
-        shelf1TextureRegion = new TextureRegion ( shelf1Texture );
-
-        shelf2Texture = new Texture ( Gdx.files.internal ( "textures/shelf-2.png" ) );
-        shelf2TextureRegion = new TextureRegion ( shelf2Texture );
-
-        shelf3Texture = new Texture ( Gdx.files.internal ( "textures/shelf-3.png" ) );
-        shelf3TextureRegion = new TextureRegion ( shelf3Texture );
-
-
         shelfBottomTexture = new Texture ( Gdx.files.internal ( "textures/shelf-bottom.png" ) );
         shelfBottomTextureRegion = new TextureRegion ( shelfBottomTexture );
 
@@ -62,9 +43,6 @@ public class Textures {
     public void dispose () {
 
         boxTexture.dispose ();
-        shelf1Texture.dispose ();
-        shelf2Texture.dispose ();
-        shelf3Texture.dispose ();
         shelfBottomTexture.dispose ();
         shelfMiddleTexture.dispose ();
         shelfTopTexture.dispose ();
@@ -81,30 +59,6 @@ public class Textures {
 
     public TextureRegion getBoxTextureRegion () {
         return boxTextureRegion;
-    }
-
-    public Texture getShelf1Texture () {
-        return shelf1Texture;
-    }
-
-    public TextureRegion getShelf1TextureRegion () {
-        return shelf1TextureRegion;
-    }
-
-    public Texture getShelf2Texture () {
-        return shelf2Texture;
-    }
-
-    public TextureRegion getShelf2TextureRegion () {
-        return shelf2TextureRegion;
-    }
-
-    public Texture getShelf3Texture () {
-        return shelf3Texture;
-    }
-
-    public TextureRegion getShelf3TextureRegion () {
-        return shelf3TextureRegion;
     }
 
     public Texture getShelfBottomTexture () {
