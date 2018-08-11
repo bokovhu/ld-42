@@ -2,6 +2,8 @@ package me.bokov.ld42.model.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Shelf {
 
@@ -13,6 +15,10 @@ public class Shelf {
         blue
 
     }
+
+    private static AtomicInteger idGenerator = new AtomicInteger (  );
+
+    private int id = idGenerator.incrementAndGet ();
 
     private int height;
     private Color color;
@@ -81,5 +87,22 @@ public class Shelf {
 
     public void setBoxes ( List <Box> boxes ) {
         this.boxes = boxes;
+    }
+
+    public int getId () {
+        return id;
+    }
+
+    @Override
+    public boolean equals ( Object o ) {
+        if ( this == o ) return true;
+        if ( o == null || getClass () != o.getClass () ) return false;
+        Shelf shelf = (Shelf) o;
+        return id == shelf.id;
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash ( id );
     }
 }
