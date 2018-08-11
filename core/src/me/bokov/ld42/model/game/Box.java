@@ -1,5 +1,7 @@
 package me.bokov.ld42.model.game;
 
+import com.badlogic.gdx.graphics.Color;
+
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,13 +17,18 @@ public class Box {
 
     public enum Color {
 
-        white,
-        red,
-        green,
-        blue,
-        yellow,
-        cyan,
-        magenta
+        white ( com.badlogic.gdx.graphics.Color.WHITE),
+        red ( com.badlogic.gdx.graphics.Color.RED),
+        green ( com.badlogic.gdx.graphics.Color.GREEN),
+        blue ( com.badlogic.gdx.graphics.Color.BLUE),
+        yellow ( com.badlogic.gdx.graphics.Color.YELLOW),
+        cyan ( com.badlogic.gdx.graphics.Color.CYAN),
+        magenta ( com.badlogic.gdx.graphics.Color.MAGENTA);
+
+        public com.badlogic.gdx.graphics.Color gdxColor;
+        Color ( com.badlogic.gdx.graphics.Color c ) {
+            this.gdxColor = c.cpy ();
+        }
 
     }
 
