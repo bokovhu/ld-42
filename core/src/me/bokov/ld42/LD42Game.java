@@ -2,12 +2,20 @@ package me.bokov.ld42;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import me.bokov.ld42.actor.game.BoxActor;
+import me.bokov.ld42.actor.game.ShelfActor;
+import me.bokov.ld42.bean.WarehouseGenerator;
+import me.bokov.ld42.bean.WarehouseToActorsConverter;
 import me.bokov.ld42.model.game.Box;
 import me.bokov.ld42.model.game.Shelf;
 import me.bokov.ld42.model.game.Warehouse;
@@ -26,7 +34,14 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
 
     float gameTime = 0f;
 
+    float fpsTimer = 0f;
+    int fps = 0;
+
     Warehouse warehouse;
+
+    Stage stage;
+
+    InputMultiplexer inputMultiplexer;
 
     @Override
     public void create () {
@@ -43,41 +58,18 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
                 Gdx.graphics.getHeight ()
         );
 
-        warehouse = new Warehouse ();
+        WarehouseGenerator warehouseGenerator = new WarehouseGenerator ();
 
-        warehouse.setShelves ( new ArrayList <> (  ) );
+        warehouse = warehouseGenerator.generate ();
 
-        Random random = new Random (  );
+        stage = new Stage ( new ScreenViewport (  ) );
 
-        for (int i = 0; i < 5; i++) {
+        WarehouseToActorsConverter warehouseToActorsConverter = new WarehouseToActorsConverter ();
+        warehouseToActorsConverter.convert ( warehouse )
+                .forEach ( stage::addActor );
 
-            Shelf shelf = new Shelf ();
-            shelf.setHeight (
-                    random.nextInt ( 5 ) + 1
-            );
-            shelf.setColor (
-                    Shelf.Color.values () [random.nextInt ( Shelf.Color.values ().length )]
-            );
-
-            int boxNum = random.nextInt ( shelf.getHeight () ) + 1;
-
-            for (int j = 0; j < boxNum; j++) {
-
-                Box box = new Box ();
-                box.setColor (
-                        Box.Color.values () [ random.nextInt ( Box.Color.values ().length ) ]
-                );
-                box.setSize (
-                        Box.Size.values () [ random.nextInt ( Box.Size.values ().length ) ]
-                );
-
-                shelf.addBox ( box );
-
-            }
-
-            warehouse.getShelves ().add ( shelf );
-
-        }
+        inputMultiplexer = new InputMultiplexer ( stage, this );
+        Gdx.input.setInputProcessor ( inputMultiplexer );
 
     }
 
@@ -85,6 +77,18 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
 
         float delta = Gdx.graphics.getDeltaTime ();
         gameTime += delta;
+
+        fpsTimer += delta;
+
+        if (fpsTimer >= 1f) {
+
+            fpsTimer = 0f;
+            System.out.println ("FPS: " + fps);
+            fps = 0;
+
+        }
+
+        stage.act (delta);
 
     }
 
@@ -96,89 +100,9 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
         Gdx.gl.glClearColor ( 1, 1, 1, 1 );
         Gdx.gl.glClear ( GL20.GL_COLOR_BUFFER_BIT );
 
-        spriteBatch.setProjectionMatrix ( cam.combined );
-        spriteBatch.begin ();
+        stage.draw ();
 
-        for ( int shelfIndex = 0; shelfIndex < warehouse.getShelves ().size (); shelfIndex++ ) {
-
-            Shelf shelf = warehouse.getShelves ().get ( shelfIndex );
-
-            int shelfX = shelfIndex * (48 + 6);
-
-            /* spriteBatch.draw (
-                    Textures.get ().getShelf2Texture (),
-                    shelfX,
-                    0
-            ); */
-
-            spriteBatch.setColor ( shelf.getColor ().gdxColor );
-
-            spriteBatch.draw (
-                    Textures.get ().getShelfBottomTexture (),
-                    shelfX,
-                    0
-            );
-
-            int yOffset = 32;
-
-            for (int i = 1; i < shelf.getHeight (); i++) {
-
-                spriteBatch.draw (
-                        Textures.get ().getShelfMiddleTexture (),
-                        shelfX,
-                        yOffset
-                );
-
-                yOffset += 32;
-
-            }
-
-            spriteBatch.draw (
-                    Textures.get ().getShelfTopTexture (),
-                    shelfX,
-                    yOffset
-            );
-
-            for ( Box box : shelf.getBoxes () ) {
-
-                spriteBatch.setColor ( box.getColor ().gdxColor );
-
-                switch ( box.getSize () ) {
-
-                    case small:
-
-                        spriteBatch.draw (
-                                Textures.get ().getSmallBoxTexture (),
-                                shelfX + ( (48f - 16f) / 2f ),
-                                16f + box.getShelfIndex () * 32f
-                        );
-
-                        break;
-                    case medium:
-
-                        spriteBatch.draw (
-                                Textures.get ().getMediumBoxTexture (),
-                                shelfX + ( (48f - 24f) / 2f ),
-                                16f + box.getShelfIndex () * 32f
-                        );
-
-                        break;
-                    case big:
-
-                        spriteBatch.draw (
-                                Textures.get ().getBigBoxTexture (),
-                                shelfX + ( (48f - 32f) / 2f ),
-                                16f + box.getShelfIndex () * 32f
-                        );
-
-                        break;
-                }
-
-            }
-
-        }
-
-        spriteBatch.end ();
+        ++fps;
 
     }
 
@@ -199,6 +123,8 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
         super.resize ( width, height );
 
         cam = new OrthographicCamera ( width, height );
+
+        stage.getViewport ().update ( width, height );
 
     }
 
