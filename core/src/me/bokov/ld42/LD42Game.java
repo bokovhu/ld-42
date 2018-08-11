@@ -4,17 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import me.bokov.ld42.model.game.Box;
 import me.bokov.ld42.model.game.Shelf;
 import me.bokov.ld42.model.game.Warehouse;
@@ -22,7 +15,6 @@ import me.bokov.ld42.store.Fonts;
 import me.bokov.ld42.store.Textures;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class LD42Game extends ApplicationAdapter implements InputProcessor {
@@ -72,8 +64,12 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
             for (int j = 0; j < boxNum; j++) {
 
                 Box box = new Box ();
-                box.setColor ( Box.Color.white );
-                box.setSize ( Box.Size.big );
+                box.setColor (
+                        Box.Color.values () [ random.nextInt ( Box.Color.values ().length ) ]
+                );
+                box.setSize (
+                        Box.Size.values () [ random.nextInt ( Box.Size.values ().length ) ]
+                );
 
                 shelf.addBox ( box );
 
@@ -146,11 +142,37 @@ public class LD42Game extends ApplicationAdapter implements InputProcessor {
             for ( Box box : shelf.getBoxes () ) {
 
                 spriteBatch.setColor ( box.getColor ().gdxColor );
-                spriteBatch.draw (
-                        Textures.get ().getBoxTexture (),
-                        shelfX + ( (48f - 32f) / 2f ),
-                        16f + box.getShelfIndex () * 32f
-                );
+
+                switch ( box.getSize () ) {
+
+                    case small:
+
+                        spriteBatch.draw (
+                                Textures.get ().getSmallBoxTexture (),
+                                shelfX + ( (48f - 16f) / 2f ),
+                                16f + box.getShelfIndex () * 32f
+                        );
+
+                        break;
+                    case medium:
+
+                        spriteBatch.draw (
+                                Textures.get ().getMediumBoxTexture (),
+                                shelfX + ( (48f - 24f) / 2f ),
+                                16f + box.getShelfIndex () * 32f
+                        );
+
+                        break;
+                    case big:
+
+                        spriteBatch.draw (
+                                Textures.get ().getBigBoxTexture (),
+                                shelfX + ( (48f - 32f) / 2f ),
+                                16f + box.getShelfIndex () * 32f
+                        );
+
+                        break;
+                }
 
             }
 
